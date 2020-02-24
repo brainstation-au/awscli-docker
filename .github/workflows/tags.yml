@@ -18,7 +18,6 @@ jobs:
         run: |
           cd awscli
           git fetch --depth=1 origin +refs/tags/*:refs/tags/*
-          git tag --list '1.*' --sort=-creatordate | head -n 5
       # - name: Checkout
       #   uses: actions/checkout@v2
       #   with:

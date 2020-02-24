@@ -10,12 +10,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Find next tag and add the same
+      - name: Find new tags in awscli
         shell: bash
         run: |
           git fetch --depth=1 origin +refs/tags/*:refs/tags/*
           last_tag=$(git for-each-ref --sort=-creatordate --count=1 --format '%(refname:short)' refs/tags)
-          last_tag=1.18.5
+          last_tag=1.18.3
           awscli_tags=$(curl https://pypi.org/pypi/awscli/json \
             | jq '.releases' \
             | jq 'to_entries | map({"tag": .key, "time": .value | select(.[0]) | .[0] | .upload_time_iso_8601})' \
@@ -27,29 +27,15 @@ jobs:
             new_tags=$awscli_tags
           fi
           echo $new_tags | jq -r '.[] | .tag | tostring' > tags.txt
-      - name: check output
+      - name: Add new tags
         shell: bash
         run: |
-          if [[ -s tags.txt ]]; then cat tags.txt; else echo "file is empty"; fi
-      # - name: Find next tag and add the same
-      #   shell: bash
-      #   run: |
-      #     git fetch --depth=1 origin +refs/tags/*:refs/tags/*
-      #     last_tag_sha=$(git rev-list --tags --max-count=1)
-      #     last_tag=$(git describe --tags $last_tag_sha)
-      #     awscli_tags=$(curl https://pypi.org/pypi/awscli/json \
-      #       | jq '.releases' \
-      #       | jq 'to_entries | map({"tag": .key, "time": .value | select(.[0]) | .[0] | .upload_time_iso_8601})' \
-      #       | jq 'sort_by(.time)')
-      #     last_tag_time=$(echo $awscli_tags | jq --arg last_tag $last_tag -r '.[] | select(.tag == $last_tag) | .time')
-      #     next_tag=$(echo $awscli_tags | jq --arg last_tag_time $last_tag_time '[.[] | select(.time > $last_tag_time)]' | jq -r '.[0].tag')
-      #     if [[ -n "$next_tag" ]] && [[ "$next_tag" != "null" ]]; then
-      #       git config --local user.email "action@github.com"
-      #       git config --local user.name "GitHub Action"
-      #       git commit --allow-empty -m "Update docker images with aws/aws-cli@${next_tag}"
-      #       git tag -a $next_tag -m "Automatic tag following aws/aws-cli release"
-      #     fi
-      # - name: Push changes
-      #   uses: ad-m/github-push-action@master
-      #   with:
-      #     github_token: ${{ secrets.GITHUB_TOKEN }}
+          if [[ -s tags.txt ]]; then
+            git config --local user.email "action@github.com"
+            git config --local user.name "GitHub Action"
+            while read new_tag; do git tag -a $new_tag -m "Automatic tag to catch up aws/aws-cli release"; done < tags.txt
+          fi
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}

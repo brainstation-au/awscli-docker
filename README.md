@@ -1,2 +1,2 @@
 # awscli-docker
-A docker container with AWSCLI installed
+A docker image with AWSCLI installed

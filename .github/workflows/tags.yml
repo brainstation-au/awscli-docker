@@ -10,43 +10,22 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-        with:
-          path: 'code'
-      - name: My latest tag
-        id: myTag
+      - name: Find next tag and add the same
         shell: bash
         run: |
-          cd code
-          git fetch --depth=1 origin +refs/tags/*:refs/tags/* > /dev/null
-          tag=$(git for-each-ref --sort=-creatordate --count=1 --format '%(refname:short)' refs/tags)
-          echo "::set-output name=tag::$tag"
-      - name: Checkout to aws/aws-cli
-        uses: actions/checkout@v2
-        with:
-          repository: 'aws/aws-cli'
-          path: 'awscli'
-      - name: Find latest tags from aws/aws-cli
+          git fetch --depth=1 origin +refs/tags/*:refs/tags/*
+          last_tag_sha=$(git rev-list --tags --max-count=1)
+          last_tag=$(git describe --tags $last_tag_sha)
+          awscli_tags=$(curl https://pypi.org/pypi/awscli/json \
+            | jq '.releases' \
+            | jq 'to_entries | map({"tag": .key, "time": .value | select(.[0]) | .[0] | .upload_time_iso_8601})' \
+            | jq 'sort_by(.time)')
+          last_tag_time=$(echo $awscli_tags | jq --arg last_tag $last_tag -r '.[] | select(.tag == $last_tag) | .time')
+          echo $awscli_tags | jq --arg last_tag_time $last_tag_time '[.[] | select(.time > $last_tag_time)]' | jq -r '.[] | .tag | tostring' > tags.txt
+      - name: check output
         shell: bash
         run: |
-          cd awscli
-          git fetch --depth=1 origin +refs/tags/*:refs/tags/* > /dev/null
-          awscli_tags=$(git for-each-ref --sort=creatordate --format '{"tag":"%(refname:short)", "time":"%(creatordate:iso-strict)"}' refs/tags | jq -s '.' | jq '[.[] | select(.tag | test("^[0-9]+[.][0-9]+[.][0-9]+$"))]')
-          last_tag=${{ steps.myTag.outputs.tag }}
-          if [[ -n $last_tag ]]; then
-            last_tag_time=$(echo $awscli_tags | jq --arg last_tag $last_tag -r '.[] | select(.tag == $last_tag) | .time')
-            new_tags=$(echo $awscli_tags | jq --arg last_tag_time $last_tag_time '[.[] | select(.time > $last_tag_time)]')
-          else
-            new_tags=$awscli_tags
-          fi
-          echo $new_tags | jq -r '.[] | .tag | tostring' > tags.txt
-      - name: Check output
-        shell: bash
-        run: |
-          cat ./awscli/tags.txt
-      # - name: Checkout
-      #   uses: actions/checkout@v2
-      #   with:
-      #     ref: 'v1'
+          cat tags.txt
       # - name: Find next tag and add the same
       #   shell: bash
       #   run: |

@@ -30,7 +30,7 @@ jobs:
       - name: check output
         shell: bash
         run: |
-          cat tags.txt
+          if [[ -s tags.txt ]]; then cat tags.txt; else echo "file is empty"; fi
       # - name: Find next tag and add the same
       #   shell: bash
       #   run: |

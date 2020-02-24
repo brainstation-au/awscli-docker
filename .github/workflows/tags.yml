@@ -11,7 +11,7 @@ jobs:
       - name: testfunction
         shell: bash
         run: |
-          echo "1.18.5" | sed -e 's/\./\n/g'
+          echo "1.18.5" | sed -e 's/\./\n/g' | head -n2
       # - name: Checkout
       #   uses: actions/checkout@v2
       # - name: Find new tags in awscli

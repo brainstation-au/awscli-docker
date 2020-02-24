@@ -8,4 +8,6 @@ RUN apk add --update --no-cache jq bash
 
 ARG AWS_CLI_VERSION
 
-RUN if [[ "$AWS_CLI_VERSION" == "latest" ]]; then pip --no-cache-dir install awscli; else pip --no-cache-dir install awscli==$AWS_CLI_VERSION; fi
+RUN echo "* * * * $AWS_CLI_VERSION * * * *"
+
+RUN if [[ -n "$AWS_CLI_VERSION" ]] || [[ "$AWS_CLI_VERSION" == "latest" ]]; then pip --no-cache-dir install awscli; else pip --no-cache-dir install awscli==$AWS_CLI_VERSION; fi

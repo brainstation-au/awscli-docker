@@ -1,0 +1,46 @@
+name: sync-tags-v1
+
+on: push
+  # schedule:
+  #   - cron: '0 * * * *'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout to aws/aws-cli
+        uses: actions/checkout@v2
+        with:
+          repository: 'aws/aws-cli'
+          path: 'awscli'
+      - name: Find latest tags from aws/aws-cli
+        shell: bash
+        run: |
+          cd awscli
+          git tag --list '1.*' --sort=-creatordate | head -n 1
+      # - name: Checkout
+      #   uses: actions/checkout@v2
+      #   with:
+      #     ref: 'v1'
+      # - name: Find next tag and add the same
+      #   shell: bash
+      #   run: |
+      #     git fetch --depth=1 origin +refs/tags/*:refs/tags/*
+      #     last_tag_sha=$(git rev-list --tags --max-count=1)
+      #     last_tag=$(git describe --tags $last_tag_sha)
+      #     awscli_tags=$(curl https://pypi.org/pypi/awscli/json \
+      #       | jq '.releases' \
+      #       | jq 'to_entries | map({"tag": .key, "time": .value | select(.[0]) | .[0] | .upload_time_iso_8601})' \
+      #       | jq 'sort_by(.time)')
+      #     last_tag_time=$(echo $awscli_tags | jq --arg last_tag $last_tag -r '.[] | select(.tag == $last_tag) | .time')
+      #     next_tag=$(echo $awscli_tags | jq --arg last_tag_time $last_tag_time '[.[] | select(.time > $last_tag_time)]' | jq -r '.[0].tag')
+      #     if [[ -n "$next_tag" ]] && [[ "$next_tag" != "null" ]]; then
+      #       git config --local user.email "action@github.com"
+      #       git config --local user.name "GitHub Action"
+      #       git commit --allow-empty -m "Update docker images with aws/aws-cli@${next_tag}"
+      #       git tag -a $next_tag -m "Automatic tag following aws/aws-cli release"
+      #     fi
+      # - name: Push changes
+      #   uses: ad-m/github-push-action@master
+      #   with:
+      #     github_token: ${{ secrets.GITHUB_TOKEN }}

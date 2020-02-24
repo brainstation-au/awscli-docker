@@ -17,8 +17,8 @@ jobs:
         shell: bash
         run: |
           cd code
-          git fetch --depth=1 origin +refs/tags/*:refs/tags/*
-          tag=$(git for-each-ref --sort=-creatordate --count=1 --format '%(refname:short)')
+          git fetch --depth=1 origin +refs/tags/*:refs/tags/* > /dev/null
+          tag=$(git for-each-ref --sort=-creatordate --count=1 --format '%(refname:short)' refs/tags)
           echo "::set-output name=tag::$tag"
       - name: Checkout to aws/aws-cli
         uses: actions/checkout@v2
@@ -29,10 +29,15 @@ jobs:
         shell: bash
         run: |
           cd awscli
-          git fetch --depth=1 origin +refs/tags/*:refs/tags/*
+          git fetch --depth=1 origin +refs/tags/*:refs/tags/* > /dev/null
           awscli_tags=$(git for-each-ref --sort=creatordate --format '{"tag":"%(refname:short)", "time":"%(creatordate:iso-strict)"}' refs/tags | jq -s '.')
-          last_tag_time=$(echo $awscli_tags | jq --arg last_tag ${{ steps.myTag.outputs.tag }} -r '.[] | select(.tag == $last_tag) | .time')
-          echo $awscli_tags | jq --arg last_tag_time $last_tag_time '[.[] | select(.time > $last_tag_time)]' > tags.txt
+          last_tag=${{ steps.myTag.outputs.tag }}
+          if [[ -n $last_tag ]]; then
+            last_tag_time=$(echo $awscli_tags | jq --arg last_tag $last_tag -r '.[] | select(.tag == $last_tag) | .time')
+            echo $awscli_tags | jq --arg last_tag_time $last_tag_time '[.[] | select(.time > $last_tag_time)]' > tags.txt
+          else
+            echo $awscli_tags > tags.txt
+          fi
       - name: Check output
         shell: bash
         run: |

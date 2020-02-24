@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+docker build -f v1/Dockerfile -t "$DOCKER_REPO:1" .
+docker build -f v2/Dockerfile -t "$DOCKER_REPO:2" .
+docker build -f v2/Dockerfile -t $IMAGE_NAME .

@@ -16,7 +16,7 @@ jobs:
         id: myTag
         shell: bash
         run: |
-          cd awscli
+          cd code
           git fetch --depth=1 origin +refs/tags/*:refs/tags/*
           tag=$(git for-each-ref --sort=-creatordate --count=1 --format '%(refname:short)')
           echo "::set-output name=tag::$tag"

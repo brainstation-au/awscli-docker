@@ -32,7 +32,7 @@ jobs:
           git fetch --depth=1 origin +refs/tags/*:refs/tags/*
           awscli_tags=$(git for-each-ref --sort=creatordate --format '{"tag":"%(refname:short)", "time":"%(creatordate:iso-strict)"}' refs/tags | jq -s '.')
           last_tag_time=$(echo $awscli_tags | jq --arg last_tag ${{ steps.myTag.outputs.tag }} -r '.[] | select(.tag == $last_tag) | .time')
-          echo $awscli_tags | jq --arg last_tag_time $last_tag_time '[.[] | select(.time > $last_tag_time)]') > tags.txt
+          echo $awscli_tags | jq --arg last_tag_time $last_tag_time '[.[] | select(.time > $last_tag_time)]' > tags.txt
       - name: Check output
         shell: bash
         run: |

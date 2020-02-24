@@ -34,10 +34,11 @@ jobs:
           last_tag=${{ steps.myTag.outputs.tag }}
           if [[ -n $last_tag ]]; then
             last_tag_time=$(echo $awscli_tags | jq --arg last_tag $last_tag -r '.[] | select(.tag == $last_tag) | .time')
-            echo $awscli_tags | jq --arg last_tag_time $last_tag_time '[.[] | select(.time > $last_tag_time)]' > tags.txt
+            new_tags=$($awscli_tags | jq --arg last_tag_time $last_tag_time '[.[] | select(.time > $last_tag_time)]')
           else
-            echo $awscli_tags > tags.txt
+            new_tags=$awscli_tags
           fi
+          echo $new_tags | jq '.[] | .tag | tostring' > tags.txt
       - name: Check output
         shell: bash
         run: |

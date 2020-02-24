@@ -19,7 +19,7 @@ jobs:
           cd code
           git fetch --depth=1 origin +refs/tags/*:refs/tags/* > /dev/null
           tag=$(git for-each-ref --sort=-creatordate --count=1 --format '%(refname:short)' refs/tags)
-          echo "::set-output name=tag::$tag"
+          echo "::set-output name=tag::1.17.10"
       - name: Checkout to aws/aws-cli
         uses: actions/checkout@v2
         with:

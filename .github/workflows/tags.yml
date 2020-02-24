@@ -18,7 +18,7 @@ jobs:
         run: |
           cd awscli
           git fetch --depth=1 origin +refs/tags/*:refs/tags/*
-          tag_list=$(git tag --list '1.*' --sort=-creatordate | head -n5)
+          git for-each-ref --sort=creatordate --sort=-creatordate --count=10 --format '{"tag":"%(refname:short)", "time":"%(creatordate:iso-strict)"}' refs/tags | jq -s '.'
       # - name: Checkout
       #   uses: actions/checkout@v2
       #   with:

@@ -30,7 +30,7 @@ jobs:
         run: |
           cd awscli
           git fetch --depth=1 origin +refs/tags/*:refs/tags/* > /dev/null
-          awscli_tags=$(git for-each-ref --sort=creatordate --format '{"tag":"%(refname:short)", "time":"%(creatordate:iso-strict)"}' refs/tags | jq -s '.')
+          awscli_tags=$(git for-each-ref --sort=creatordate --format '{"tag":"%(refname:short)", "time":"%(creatordate:iso-strict)"}' refs/tags | jq -s '.' | jq '[.[] | select(.tag | test("^[0-9]+[.][0-9]+[.][0-9]+$"))]')
           last_tag=${{ steps.myTag.outputs.tag }}
           if [[ -n $last_tag ]]; then
             last_tag_time=$(echo $awscli_tags | jq --arg last_tag $last_tag -r '.[] | select(.tag == $last_tag) | .time')

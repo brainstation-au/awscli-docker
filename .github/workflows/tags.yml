@@ -1,4 +1,4 @@
-name: sync-tags-v1
+name: sync-tags
 
 on: push
   # schedule:
@@ -18,8 +18,8 @@ jobs:
         run: |
           cd awscli
           git fetch --depth=1 origin +refs/tags/*:refs/tags/*
-          tag_list=$(git for-each-ref --sort=creatordate --sort=-creatordate --count=10 --format '{"tag":"%(refname:short)", "time":"%(creatordate:iso-strict)"}' refs/tags | jq -s '.')
-          echo "foo"
+          tag_list=$(git for-each-ref --sort=creatordate --sort=-creatordate --count=10 --format '{"tag":"%(refname:short)", "time":"%(creatordate:iso-strict)"}' refs/tags | jq -s '. | tostring')
+          echo $tag_list
       # - name: Checkout
       #   uses: actions/checkout@v2
       #   with:

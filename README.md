@@ -1,4 +1,4 @@
-# awscli-docker
+# awscli
 A docker image with AWSCLI installed
 
 [![Docker build](https://img.shields.io/docker/cloud/build/brainstation/awscli?label=build&logo=docker)](https://hub.docker.com/r/brainstation/awscli/builds)

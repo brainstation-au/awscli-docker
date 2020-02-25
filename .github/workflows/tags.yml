@@ -15,7 +15,7 @@ jobs:
         run: |
           git fetch --depth=1 origin +refs/tags/*:refs/tags/*
           last_tag=$(git for-each-ref --sort=-creatordate --count=1 --format '%(refname:short)' refs/tags)
-          last_tag=1.18.5
+          last_tag=1.16.309
           awscli_tags=$(curl https://pypi.org/pypi/awscli/json \
             | jq '.releases' \
             | jq 'to_entries | map({"tag": .key, "time": .value | select(.[0]) | .[0] | .upload_time_iso_8601})' \

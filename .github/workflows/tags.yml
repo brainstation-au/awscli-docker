@@ -26,13 +26,15 @@ jobs:
           else
             new_tags=$awscli_tags
           fi
-          next_tag=$(echo $new_tags | jq -r '.[0] | .tag | tostring')
+          next_tag=$(echo $new_tags | jq -r '.[0] | .tag')
           echo "::set-output name=next_tag::$next_tag"
       - name: Add a new tag
         shell: bash
         run: |
           next_tag=${{ steps.awscli_tags.outputs.next_tag }}
-          if [[ -n $next_tag ]]; then
+          if [[ "$next_tag" == "null" ]]; then
+            echo "No new tag to add."
+          else
             git config --local user.email "action@github.com"
             git config --local user.name "GitHub Action"
             git tag -a $next_tag -m "Automatic tag to catch up aws/aws-cli release"

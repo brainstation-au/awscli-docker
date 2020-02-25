@@ -16,7 +16,7 @@ Please find all available tags [here](https://hub.docker.com/r/brainstation/awsc
 
 [Docker Hub](https://hub.docker.com/r/brainstation/awscli)
 
-Tags of this project represent the release tags of [awscli](https://github.com/aws/awscli). Whenever there is a new release tag available in [awscli](https://github.com/aws/awscli), the `latest` will be updated and the new tag will be added **within an hour**.
+Tags of this project represent the release tags of [awscli](https://github.com/aws/awscli). Whenever there is a new release tag available in [awscli](https://github.com/aws/awscli), the `latest` will be updated and the new tag will be added **within an hour**. This auto update works for awscli@v1 only, we will do same for v2 once we know how AWS is going to manage the release as it's not a python package anymore.
 
 As this image is mainly useful in a CI context, [jq](https://stedolan.github.io/jq/) is also provided in it, to parse some awscli response.
 

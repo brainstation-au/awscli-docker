@@ -1,0 +1,18 @@
+version: '3'
+services:
+  who-am-i-1:
+    image: brainstation/aws-cli:latest
+    working_dir: /opt/code
+    volumes:
+      - .:/opt/code
+      - $HOME/.aws:/root/.aws
+    command: ./task.sh
+
+  who-am-i-2:
+    image: brainstation/aws-cli:latest
+    volumes:
+      - $HOME/.aws:/root/.aws
+    command: bash -c -e "
+      aws sts get-caller-identity &&
+      echo \"Hello World!\"
+      "

@@ -5,7 +5,7 @@ on:
     - cron: '*/10 * * * *'
 
 jobs:
-  deploy:
+  tagV1:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -28,7 +28,7 @@ jobs:
           fi
           next_tag=$(echo $new_tags | jq -r '.[0] | .tag | tostring')
           echo "::set-output name=next_tag::$next_tag"
-      - name: Add new tags
+      - name: Add a new tag
         shell: bash
         run: |
           next_tag=${{ steps.awscli_tags.outputs.next_tag }}

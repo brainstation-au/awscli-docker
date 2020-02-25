@@ -1,8 +1,8 @@
 name: sync-tags
 
-on: push
-  # schedule:
-  #   - cron: '0 * * * *'
+on:
+  schedule:
+    - cron: '*/10 * * * *'
 
 jobs:
   deploy:
@@ -11,11 +11,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Find new tags in awscli
+        id: awscli_tags
         shell: bash
         run: |
           git fetch --depth=1 origin +refs/tags/*:refs/tags/*
           last_tag=$(git for-each-ref --sort=-creatordate --count=1 --format '%(refname:short)' refs/tags)
-          last_tag=1.16.309
           awscli_tags=$(curl https://pypi.org/pypi/awscli/json \
             | jq '.releases' \
             | jq 'to_entries | map({"tag": .key, "time": .value | select(.[0]) | .[0] | .upload_time_iso_8601})' \
@@ -26,14 +26,16 @@ jobs:
           else
             new_tags=$awscli_tags
           fi
-          echo $new_tags | jq -r '.[] | .tag | tostring' > tags.txt
+          next_tag=$(echo $new_tags | jq -r '.[0] | .tag | tostring')
+          echo "::set-output name=next_tag::$next_tag"
       - name: Add new tags
         shell: bash
         run: |
-          if [[ -s tags.txt ]]; then
+          next_tag=${{ steps.awscli_tags.outputs.next_tag }}
+          if [[ -n $next_tag ]]; then
             git config --local user.email "action@github.com"
             git config --local user.name "GitHub Action"
-            while read new_tag; do git tag -a $new_tag -m "Automatic tag to catch up aws/aws-cli release"; sleep 2; done < tags.txt
+            git tag -a $next_tag -m "Automatic tag to catch up aws/aws-cli release"
           fi
       - name: Push changes
         uses: ad-m/github-push-action@master

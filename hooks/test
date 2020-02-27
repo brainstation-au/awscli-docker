@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 
-source ./__version.sh
+source ./version.sh
 
 docker-compose -f docker-compose.test.yml run --rm "sut$AWSCLI_MAJOR_VERSION"

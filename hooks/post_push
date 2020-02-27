@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-source ./__version.sh
+source ./version.sh
 
 function join_by { local IFS="$1"; shift; echo "$*"; }
 

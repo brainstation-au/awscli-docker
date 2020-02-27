@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 
-source ./__version.sh
+source ./version.sh
 
 docker build --build-arg --target "V$AWSCLI_MAJOR_VERSION" -f $DOCKERFILE_PATH -t $IMAGE_NAME .

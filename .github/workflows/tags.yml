@@ -73,7 +73,7 @@ jobs:
           last_tag=${{ steps.myTag.outputs.tag }}
           if [[ -n $last_tag ]]; then
             last_tag_time=$(echo $awscli_tags | jq --arg last_tag $last_tag -r '.[] | select(.tag == $last_tag) | .time')
-            new_tags=$(echo $awscli_tags | jq --arg last_tag_time $last_tag_time '[.[] | select(.time > $last_tag_time)]')
+            new_tags=$(echo $awscli_tags | jq --arg last_tag_time $last_tag_time '[.[] | select(.time > $last_tag_time) | select(.tag | test("^2"))]')
           else
             new_tags=$awscli_tags
           fi

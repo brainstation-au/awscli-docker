@@ -1,0 +1,15 @@
+FROM python:alpine
+
+LABEL maintainer="brainstation<brainstation@outlook.com.au>"
+
+ARG DOCKER_TAG
+
+ENV PYTHONIOENCODING=UTF-8
+
+RUN apk add --update --no-cache jq bash
+
+RUN if [[ "$DOCKER_TAG" == "1"* ]]; then \
+      pip --no-cache-dir install awscli==$DOCKER_TAG; \
+    else \
+      pip --no-cache-dir install awscli; \
+    fi

@@ -3,9 +3,9 @@ services:
   sut1:
     build:
       context: .
+      dockerfile: DockerfileV1
       args:
         - DOCKER_TAG
-      target: V1
     environment:
       - DOCKER_TAG
     working_dir: /opt/code
@@ -16,9 +16,9 @@ services:
   sut2:
     build:
       context: .
+      dockerfile: DockerfileV2
       args:
         - DOCKER_TAG
-      target: V2
     environment:
       - DOCKER_TAG
     working_dir: /opt/code

@@ -2,4 +2,4 @@
 
 source ./version.sh
 
-docker build --build-arg DOCKER_TAG --target "V$AWSCLI_MAJOR_VERSION" -f $DOCKERFILE_PATH -t $IMAGE_NAME .
+docker build --build-arg DOCKER_TAG -f $DOCKERFILE_PATH -t $IMAGE_NAME .

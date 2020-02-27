@@ -2,6 +2,8 @@ FROM amazonlinux:2
 
 LABEL maintainer="brainstation<brainstation@outlook.com.au>"
 
+ARG AWS_CLI_VERSION
+
 RUN yum update -y > /dev/null \
     && yum install -y unzip jq > /dev/null
 

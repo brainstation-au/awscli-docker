@@ -2,11 +2,11 @@ FROM python:alpine
 
 LABEL maintainer="brainstation<brainstation@outlook.com.au>"
 
+ARG AWS_CLI_VERSION
+
 ENV PYTHONIOENCODING=UTF-8
 
 RUN apk add --update --no-cache jq bash
-
-ARG AWS_CLI_VERSION
 
 RUN if [[ -n "$AWS_CLI_VERSION" ]] || [[ "$AWS_CLI_VERSION" == "latest" ]]; then \
       pip --no-cache-dir install awscli; \

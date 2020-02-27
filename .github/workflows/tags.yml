@@ -87,6 +87,7 @@ jobs:
           if [[ "$next_tag" == "null" ]]; then
             echo "No new tag to add."
           else
+            cd code
             git config --local user.email "action@github.com"
             git config --local user.name "GitHub Action"
             git tag -a $next_tag -m "Automatic tag to catch up aws/aws-cli release"

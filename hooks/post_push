@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 
+source ./__version.sh
+
 function join_by { local IFS="$1"; shift; echo "$*"; }
 
-if [[ "$DOCKER_TAG" == "1"* ]] || [[ "$DOCKER_TAG" == "2"* ]]; then
+if [[ "$AWSCLI_MAJOR_VERSION" == "1" ]] || [[ "$AWSCLI_MAJOR_VERSION" == "2" ]]; then
   CUSTOM_TAG=$(join_by . $(echo $DOCKER_TAG | sed -e 's/\./\n/g' | head -n 2))
   docker tag $IMAGE_NAME $DOCKER_REPO:$CUSTOM_TAG
   docker push $DOCKER_REPO:$CUSTOM_TAG
@@ -12,7 +14,7 @@ if [[ "$DOCKER_TAG" == "1"* ]] || [[ "$DOCKER_TAG" == "2"* ]]; then
   docker push $DOCKER_REPO:$CUSTOM_TAG
 fi
 
-if [[ "$DOCKER_TAG" == "1"* ]]
+if [[ "$AWSCLI_MAJOR_VERSION" == "1" ]]
   docker tag $IMAGE_NAME $DOCKER_REPO:latest
   docker push $DOCKER_REPO:latest
 fi

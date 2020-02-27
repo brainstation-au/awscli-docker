@@ -1,10 +1,24 @@
-version: '3'
+version: '3.4'
 services:
-  sut:
+  sut1:
     build:
       context: .
       args:
-        - AWS_CLI_VERSION=$DOCKER_TAG
+        - DOCKER_TAG
+      target: V1
+    environment:
+      - DOCKER_TAG
+    working_dir: /opt/code
+    volumes:
+      - .:/opt/code
+    command: ./test.sh
+
+  sut2:
+    build:
+      context: .
+      args:
+        - DOCKER_TAG
+      target: V2
     environment:
       - DOCKER_TAG
     working_dir: /opt/code

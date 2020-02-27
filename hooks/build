@@ -1,3 +1,5 @@
 #!/usr/bin/env bash
 
-docker build --build-arg AWS_CLI_VERSION=$DOCKER_TAG -f $DOCKERFILE_PATH -t $IMAGE_NAME .
+source ./__version.sh
+
+docker build --build-arg --target "V$AWSCLI_MAJOR_VERSION" -f $DOCKERFILE_PATH -t $IMAGE_NAME .

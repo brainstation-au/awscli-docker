@@ -15,7 +15,7 @@ jobs:
   #       shell: bash
   #       run: |
   #         git fetch --depth=1 origin +refs/tags/*:refs/tags/*
-  #         last_tag=$(git for-each-ref --sort=-creatordate --count=1 --format '%(refname:short)' refs/tags)
+  #         last_tag=$(git for-each-ref --sort=-creatordate --format '%(refname:short)' refs/tags | grep '^1' | head -n 1)
   #         awscli_tags=$(curl https://pypi.org/pypi/awscli/json \
   #           | jq '.releases' \
   #           | jq 'to_entries | map({"tag": .key, "time": .value | select(.[0]) | .[0] | .upload_time_iso_8601})' \
@@ -57,29 +57,28 @@ jobs:
         run: |
           cd code
           git fetch --depth=1 origin +refs/tags/*:refs/tags/* > /dev/null
-          tag=$(git for-each-ref --sort=-creatordate --format '%(refname:short)' refs/tags | grep '^1' | head -n 1)
-          echo "Latest tag: $tag"
+          tag=$(git for-each-ref --sort=-creatordate --format '%(refname:short)' refs/tags | grep '^2' | head -n 1)
           echo "::set-output name=tag::$tag"
-      # - name: Checkout to aws/aws-cli
-      #   uses: actions/checkout@v2
-      #   with:
-      #     repository: 'aws/aws-cli'
-      #     path: 'awscli'
-      # - name: Find latest tags from aws/aws-cli
-      #   shell: bash
-      #   run: |
-      #     cd awscli
-      #     git fetch --depth=1 origin +refs/tags/*:refs/tags/* > /dev/null
-      #     awscli_tags=$(git for-each-ref --sort=creatordate --format '{"tag":"%(refname:short)", "time":"%(creatordate:iso-strict)"}' refs/tags | jq -s '.' | jq '[.[] | select(.tag | test("^[0-9]+[.][0-9]+[.][0-9]+$"))]')
-      #     last_tag=${{ steps.myTag.outputs.tag }}
-      #     if [[ -n $last_tag ]]; then
-      #       last_tag_time=$(echo $awscli_tags | jq --arg last_tag $last_tag -r '.[] | select(.tag == $last_tag) | .time')
-      #       new_tags=$(echo $awscli_tags | jq --arg last_tag_time $last_tag_time '[.[] | select(.time > $last_tag_time)]')
-      #     else
-      #       new_tags=$awscli_tags
-      #     fi
-      #     echo $new_tags | jq -r '.[] | .tag | tostring' > tags.txt
-      # - name: Check output
-      #   shell: bash
-      #   run: |
-      #     cat ./awscli/tags.txt
+      - name: Checkout to aws/aws-cli
+        uses: actions/checkout@v2
+        with:
+          repository: 'aws/aws-cli'
+          path: 'awscli'
+      - name: Find latest tags from aws/aws-cli
+        shell: bash
+        run: |
+          cd awscli
+          git fetch --depth=1 origin +refs/tags/*:refs/tags/* > /dev/null
+          awscli_tags=$(git for-each-ref --sort=creatordate --format '{"tag":"%(refname:short)", "time":"%(creatordate:iso-strict)"}' refs/tags | jq -s '.' | jq '[.[] | select(.tag | test("^[0-9]+[.][0-9]+[.][0-9]+$"))]')
+          last_tag=${{ steps.myTag.outputs.tag }}
+          if [[ -n $last_tag ]]; then
+            last_tag_time=$(echo $awscli_tags | jq --arg last_tag $last_tag -r '.[] | select(.tag == $last_tag) | .time')
+            new_tags=$(echo $awscli_tags | jq --arg last_tag_time $last_tag_time '[.[] | select(.time > $last_tag_time)]')
+          else
+            new_tags=$awscli_tags
+          fi
+          echo $new_tags | jq -r '.[] | .tag | tostring' > tags.txt
+      - name: Check output
+        shell: bash
+        run: |
+          cat ./awscli/tags.txt

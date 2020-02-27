@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
-source ./version.sh
+if [[ "$DOCKER_TAG" == "1"* ]] || [[ "$DOCKER_TAG" == "latest" ]]; then
+  AWSCLI_MAJOR_VERSION="1"
+elif [[ "$DOCKER_TAG" == "2"* ]]; then
+  AWSCLI_MAJOR_VERSION="2"
+fi
 
 docker-compose -f docker-compose.test.yml run --rm "sut$AWSCLI_MAJOR_VERSION"

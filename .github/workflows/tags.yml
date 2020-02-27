@@ -50,7 +50,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
         with:
-          path: 'code'
+          path: code
       - name: My latest tag
         id: myTag
         shell: bash
@@ -62,8 +62,8 @@ jobs:
       - name: Checkout to aws/aws-cli
         uses: actions/checkout@v2
         with:
-          repository: 'aws/aws-cli'
-          path: 'awscli'
+          repository: aws/aws-cli
+          path: awscli
       - name: Find latest tags from aws/aws-cli
         id: awscli_tags
         shell: bash
@@ -96,3 +96,4 @@ jobs:
         uses: ad-m/github-push-action@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          directory: code

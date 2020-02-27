@@ -1,8 +1,0 @@
-version: '3'
-services:
-  sut:
-    build:
-      context: .
-      args:
-        - AWS_CLI_VERSION=$DOCKER_TAG
-    command: bash -c -e "aws --version"

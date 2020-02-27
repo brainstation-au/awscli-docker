@@ -14,7 +14,7 @@ if [[ "$AWSCLI_MAJOR_VERSION" == "1" ]] || [[ "$AWSCLI_MAJOR_VERSION" == "2" ]];
   docker push $DOCKER_REPO:$CUSTOM_TAG
 fi
 
-if [[ "$AWSCLI_MAJOR_VERSION" == "1" ]]
+if [[ "$AWSCLI_MAJOR_VERSION" == "1" ]]; then
   docker tag $IMAGE_NAME $DOCKER_REPO:latest
   docker push $DOCKER_REPO:latest
 fi

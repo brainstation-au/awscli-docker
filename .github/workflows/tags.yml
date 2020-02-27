@@ -57,7 +57,7 @@ jobs:
         run: |
           cd code
           git fetch --depth=1 origin +refs/tags/*:refs/tags/* > /dev/null
-          tag=$(git for-each-ref --sort=-creatordate --format '%(refname:short)' refs/tags | grep '^2' | head -n 1)
+          tag=$(git for-each-ref --sort=-creatordate --format '%(refname:short)' refs/tags | grep '^1' | head -n 1)
           echo "Latest tag: $tag"
           echo "::set-output name=tag::$tag"
       # - name: Checkout to aws/aws-cli

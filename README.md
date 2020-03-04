@@ -22,6 +22,13 @@ As this image is mainly useful in a CI context, [jq](https://stedolan.github.io/
 
 ## Usage example
 
+### With `docker`
+```bash
+docker run --mount type=bind,src=$HOME/.aws,dst=/root/.aws --rm brainstation/awscli:2 aws sts get-caller-identity
+```
+
+### With `docker-compose`
+
 docker-compose.yml
 ```yml
 version: '3'

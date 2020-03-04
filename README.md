@@ -22,6 +22,8 @@ As this image is mainly useful in a CI context, [jq](https://stedolan.github.io/
 
 ## Usage example
 
+To be able to try these examples you need to have valid credentials in `~/.aws/credentials` on your host machine. To set it up, you may follow the instructions [here](https://github.com/aws/awscli#getting-started).
+
 ### With `docker`
 ```bash
 docker run --mount type=bind,src=$HOME/.aws,dst=/root/.aws --rm brainstation/awscli:2 aws sts get-caller-identity
@@ -59,8 +61,7 @@ UserId=$(aws sts get-caller-identity | jq -r '.UserId')
 echo "My user id: $UserId"
 ```
 
-To be able to try this example you need to have valid credentials in `~/.aws/credentials` on your host machine. To set it up, you may follow the instruction [here](https://github.com/aws/awscli#getting-started).
-
+Execution output:
 ```bash
 $ docker-compose run --rm who-am-i-1
 My user id: ABCDEFG3H5IJK4NXYAYJ4

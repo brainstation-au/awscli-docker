@@ -26,7 +26,16 @@ To be able to try these examples you need to have valid credentials in `~/.aws/c
 
 ### With `docker`
 ```bash
-docker run --mount type=bind,src=$HOME/.aws,dst=/root/.aws --rm brainstation/awscli:2 aws sts get-caller-identity
+$ docker run \
+--mount type=bind,src=$HOME/.aws,dst=/root/.aws \
+--rm \
+brainstation/awscli:2 \
+aws sts get-caller-identity
+{
+  "UserId": "<user id>",
+  "Account": "<account number>",
+  "Arn": "<user or role arn>"
+}
 ```
 
 ### With `docker-compose`
@@ -67,9 +76,9 @@ $ docker-compose run --rm who-am-i-1
 My user id: ABCDEFG3H5IJK4NXYAYJ4
 $ docker-compose run --rm who-am-i-2
 {
-    "UserId": "<user id>",
-    "Account": "<account number>",
-    "Arn": "<user or role arn>"
+  "UserId": "<user id>",
+  "Account": "<account number>",
+  "Arn": "<user or role arn>"
 }
 Hello World!
 ```

@@ -2,7 +2,7 @@ name: sync-tags
 
 on:
   schedule:
-    - cron: '0 * * * *'
+    - cron: '0 */8 * * *'
 
 jobs:
   tagV1:

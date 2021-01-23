@@ -12,7 +12,7 @@ if [[ "$DOCKER_TAG" == "1"* ]] || [[ "$DOCKER_TAG" == "2"* ]]; then
   docker push $DOCKER_REPO:$CUSTOM_TAG
 fi
 
-if [[ "$DOCKER_TAG" == "1"* ]]; then
+if [[ "$DOCKER_TAG" == "2"* ]]; then
   docker tag $IMAGE_NAME $DOCKER_REPO:latest
   docker push $DOCKER_REPO:latest
 fi

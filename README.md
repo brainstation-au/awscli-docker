@@ -5,12 +5,12 @@ A docker image with AWSCLI installed
 ![Docker Pulls](https://img.shields.io/docker/pulls/brainstation/awscli.svg?label=pulls&logo=docker)
 
 ## Tag Pattern:
-- 1, latest
-- 1.x
-- 1.x.x
-- 2
+- 2, latest
 - 2.x
 - 2.x.x
+- 1
+- 1.x
+- 1.x.x
 
 Please find all available tags [here](https://hub.docker.com/r/brainstation/awscli/tags).
 

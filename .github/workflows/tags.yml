@@ -1,8 +1,9 @@
 name: sync-tags
 
 on:
-  schedule:
-    - cron: '0 */8 * * *'
+  push:
+    branches:
+      - "main"
 
 jobs:
   tagV1:
@@ -10,6 +11,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+
       - name: Find new tags in awscli
         id: awscli_tags
         shell: bash
@@ -28,21 +30,47 @@ jobs:
           fi
           next_tag=$(echo $new_tags | jq -r '.[0] | .tag')
           echo "::set-output name=next_tag::$next_tag"
+
       - name: Add a new tag
         shell: bash
+        if: ${{ steps.awscli_tags.outputs.next_tag != 'null' }}
         run: |
           next_tag=${{ steps.awscli_tags.outputs.next_tag }}
-          if [[ "$next_tag" == "null" ]]; then
-            echo "No new tag to add."
-          else
-            git config --local user.email "action@github.com"
-            git config --local user.name "GitHub Action"
-            git tag -a $next_tag -m "Automatic tag to catch up aws/aws-cli release"
-          fi
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git tag -a $next_tag -m "Automatic tag to catch up aws/aws-cli release"
+
       - name: Push changes
+        if: ${{ steps.awscli_tags.outputs.next_tag != 'null' }}
         uses: ad-m/github-push-action@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Login to Docker Hub
+        if: ${{ steps.awscli_tags.outputs.next_tag != 'null' }}
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
+      - name: Set up Docker Buildx
+        id: buildx
+        if: ${{ steps.awscli_tags.outputs.next_tag != 'null' }}
+        uses: docker/setup-buildx-action@v1
+
+      - name: Build and push
+        id: docker_build
+        if: ${{ steps.awscli_tags.outputs.next_tag != 'null' }}
+        uses: docker/build-push-action@v2
+        with:
+          context: ./
+          file: ./DockerfileV1
+          push: true
+          tags: |
+            brainstation/awscli-test:${{ steps.awscli_tags.outputs.next_tag }}
+
+      - name: Image digest
+        run: echo ${{ steps.docker_build.outputs.digest }}
 
   tagV2:
     runs-on: ubuntu-latest

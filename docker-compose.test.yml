@@ -1,6 +1,6 @@
 version: '3.4'
 services:
-  sut1:
+  version1:
     build:
       context: .
       dockerfile: DockerfileV1
@@ -13,7 +13,7 @@ services:
       - .:/opt/code
     command: ./test.sh
 
-  sut2:
+  version2:
     build:
       context: .
       dockerfile: DockerfileV2

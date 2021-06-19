@@ -37,8 +37,8 @@ jobs:
         env:
           DOCKER_TAG: ${{ steps.awscli_tags.outputs.next_tag }}
         run: |
-          docker-compose -f docker-compose.test.yml build sut1
-          docker-compose -f docker-compose.test.yml run --rm sut1
+          docker-compose -f docker-compose.test.yml build version1
+          docker-compose -f docker-compose.test.yml run --rm version1
           docker-compose -f docker-compose.test.yml down
 
       - name: Login to Docker Hub
@@ -86,13 +86,13 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
   tagV2:
-    if: ${{ false }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v2
         with:
           path: code
+
       - name: My latest tag
         id: myTag
         shell: bash
@@ -101,11 +101,13 @@ jobs:
           git fetch --depth=1 origin +refs/tags/*:refs/tags/* > /dev/null
           tag=$(git for-each-ref --sort=-creatordate --format '%(refname:short)' refs/tags | grep '^2' | head -n 1)
           echo "::set-output name=tag::$tag"
+
       - name: Checkout to aws/aws-cli
         uses: actions/checkout@v2
         with:
           repository: aws/aws-cli
           path: awscli
+
       - name: Find latest tags from aws/aws-cli
         id: awscli_tags
         shell: bash
@@ -122,19 +124,59 @@ jobs:
           fi
           next_tag=$(echo $new_tags | jq -r '.[0] | .tag')
           echo "::set-output name=next_tag::$next_tag"
+
+      - name: Build and Test Docker Image
+        shell: bash
+        if: ${{ steps.awscli_tags.outputs.next_tag != 'null' }}
+        env:
+          DOCKER_TAG: ${{ steps.awscli_tags.outputs.next_tag }}
+        run: |
+          docker-compose -f code/docker-compose.test.yml build version2
+          docker-compose -f code/docker-compose.test.yml run --rm version2
+          docker-compose -f code/docker-compose.test.yml down
+
+      - name: Login to Docker Hub
+        if: ${{ steps.awscli_tags.outputs.next_tag != 'null' }}
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
+      - name: Set up Docker Buildx
+        id: buildx
+        if: ${{ steps.awscli_tags.outputs.next_tag != 'null' }}
+        uses: docker/setup-buildx-action@v1
+
+      - name: Build and push
+        id: docker_build
+        if: ${{ steps.awscli_tags.outputs.next_tag != 'null' }}
+        uses: docker/build-push-action@v2
+        with:
+          context: ./
+          file: ./DockerfileV1
+          push: true
+          build-args: |
+            DOCKER_TAG=${{ steps.awscli_tags.outputs.next_tag }}
+          tags: |
+            brainstation/awscli-test:${{ steps.awscli_tags.outputs.next_tag }}
+            brainstation/awscli-test:latest
+
+      - name: Image digest
+        if: ${{ steps.awscli_tags.outputs.next_tag != 'null' }}
+        run: echo ${{ steps.docker_build.outputs.digest }}
+
       - name: Add a new tag
+        if: ${{ steps.awscli_tags.outputs.next_tag != 'null' }}
         shell: bash
         run: |
           next_tag=${{ steps.awscli_tags.outputs.next_tag }}
-          if [[ "$next_tag" == "null" ]]; then
-            echo "No new tag to add."
-          else
-            cd code
-            git config --local user.email "action@github.com"
-            git config --local user.name "GitHub Action"
-            git tag -a $next_tag -m "Automatic tag to catch up aws/aws-cli release"
-          fi
+          cd code
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git tag -a $next_tag -m "Automatic tag to catch up aws/aws-cli release"
+
       - name: Push changes
+        if: ${{ steps.awscli_tags.outputs.next_tag != 'null' }}
         uses: ad-m/github-push-action@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}

@@ -152,8 +152,8 @@ jobs:
         if: ${{ steps.awscli_tags.outputs.next_tag != 'null' }}
         uses: docker/build-push-action@v2
         with:
-          context: ./
-          file: ./DockerfileV2
+          context: ./code/
+          file: ./code/DockerfileV2
           push: true
           build-args: |
             DOCKER_TAG=${{ steps.awscli_tags.outputs.next_tag }}

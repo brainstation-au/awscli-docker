@@ -197,6 +197,7 @@ jobs:
             brainstation/awscli:${{ steps.image_tags.outputs.major_tag }}-amazonlinux
             brainstation/awscli:${{ steps.image_tags.outputs.minor_tag }}-amazonlinux
             brainstation/awscli:latest
+            brainstation/awscli:latest-amazonlinux
 
       - name: Build and push - ubuntu
         id: docker_build_ubuntu

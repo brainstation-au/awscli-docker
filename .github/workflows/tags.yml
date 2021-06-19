@@ -73,6 +73,7 @@ jobs:
         run: echo ${{ steps.docker_build.outputs.digest }}
 
   tagV2:
+    if: ${{ false }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

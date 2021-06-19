@@ -37,6 +37,10 @@ jobs:
         env:
           DOCKER_TAG: ${{ steps.awscli_tags.outputs.next_tag }}
         run: |
+          echo $DOCKER_TAG
+          export DOCKER_TAG=${{ steps.awscli_tags.outputs.next_tag }}
+          echo $DOCKER_TAG
+          exit 1
           docker-compose -f docker-compose.test.yml build sut1
           docker-compose -f docker-compose.test.yml run --rm sut1
           docker-compose -f docker-compose.test.yml down

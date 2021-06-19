@@ -50,6 +50,7 @@ jobs:
         run: |
           MAJOR_TAG=$(echo $DOCKER_TAG | sed -e 's/\./\n/g' | head -n 1)
           echo "::set-output name=major_tag::$MAJOR_TAG"
+          function join_by { local IFS="$1"; shift; echo "$*"; }
           MINOR_TAG=$(join_by . $(echo $DOCKER_TAG | sed -e 's/\./\n/g' | head -n 2))
           echo "::set-output name=minor_tag::$MINOR_TAG"
 
@@ -158,6 +159,7 @@ jobs:
         run: |
           MAJOR_TAG=$(echo $DOCKER_TAG | sed -e 's/\./\n/g' | head -n 1)
           echo "::set-output name=major_tag::$MAJOR_TAG"
+          function join_by { local IFS="$1"; shift; echo "$*"; }
           MINOR_TAG=$(join_by . $(echo $DOCKER_TAG | sed -e 's/\./\n/g' | head -n 2))
           echo "::set-output name=minor_tag::$MINOR_TAG"
 

@@ -1,7 +1,7 @@
 version: '3.4'
 services:
-  version1:
-    build:
+  version1: &base
+    build: &build
       context: .
       dockerfile: DockerfileV1
       args:
@@ -13,15 +13,14 @@ services:
       - .:/opt/code
     command: ./test.sh
 
-  version2:
+  amazonlinux:
+    <<: *base
     build:
-      context: .
-      dockerfile: DockerfileV2
-      args:
-        - DOCKER_TAG
-    environment:
-      - DOCKER_TAG
-    working_dir: /opt/code
-    volumes:
-      - .:/opt/code
-    command: ./test.sh
+      <<: *build
+      dockerfile: Dockerfile-amazonlinux
+
+  ubuntu:
+    <<: *base
+    build:
+      <<: *build
+      dockerfile: Dockerfile-ubuntu

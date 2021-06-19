@@ -1,0 +1,10 @@
+ARG DOCKER_TAG
+
+FROM amazon/aws-cli:$DOCKER_TAG
+
+LABEL maintainer="brainstation<brainstation@outlook.com.au>"
+
+RUN yum update -y > /dev/null \
+    && yum install -y jq > /dev/null
+
+ENTRYPOINT []

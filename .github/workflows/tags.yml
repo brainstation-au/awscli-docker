@@ -79,9 +79,9 @@ jobs:
           build-args: |
             DOCKER_TAG=${{ steps.awscli_tags.outputs.next_tag }}
           tags: |
-            brainstation/awscli-test:${{ steps.awscli_tags.outputs.next_tag }}
-            brainstation/awscli-test:${{ steps.image_tags.outputs.major_tag }}
-            brainstation/awscli-test:${{ steps.image_tags.outputs.minor_tag }}
+            brainstation/awscli:${{ steps.awscli_tags.outputs.next_tag }}
+            brainstation/awscli:${{ steps.image_tags.outputs.major_tag }}
+            brainstation/awscli:${{ steps.image_tags.outputs.minor_tag }}
 
       - name: Image digest
         if: ${{ steps.awscli_tags.outputs.next_tag != 'null' }}
@@ -188,10 +188,10 @@ jobs:
           build-args: |
             DOCKER_TAG=${{ steps.awscli_tags.outputs.next_tag }}
           tags: |
-            brainstation/awscli-test:${{ steps.awscli_tags.outputs.next_tag }}
-            brainstation/awscli-test:${{ steps.image_tags.outputs.major_tag }}
-            brainstation/awscli-test:${{ steps.image_tags.outputs.minor_tag }}
-            brainstation/awscli-test:latest
+            brainstation/awscli:${{ steps.awscli_tags.outputs.next_tag }}
+            brainstation/awscli:${{ steps.image_tags.outputs.major_tag }}
+            brainstation/awscli:${{ steps.image_tags.outputs.minor_tag }}
+            brainstation/awscli:latest
 
       - name: Image digest
         if: ${{ steps.awscli_tags.outputs.next_tag != 'null' }}

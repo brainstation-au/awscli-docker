@@ -41,21 +41,6 @@ jobs:
           docker-compose -f docker-compose.test.yml run --rm sut1
           docker-compose -f docker-compose.test.yml down
 
-      - name: Add a new tag
-        shell: bash
-        if: ${{ steps.awscli_tags.outputs.next_tag != 'null' }}
-        run: |
-          next_tag=${{ steps.awscli_tags.outputs.next_tag }}
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git tag -a $next_tag -m "Automatic tag to catch up aws/aws-cli release"
-
-      - name: Push changes
-        if: ${{ steps.awscli_tags.outputs.next_tag != 'null' }}
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Login to Docker Hub
         if: ${{ steps.awscli_tags.outputs.next_tag != 'null' }}
         uses: docker/login-action@v1
@@ -84,6 +69,21 @@ jobs:
       - name: Image digest
         if: ${{ steps.awscli_tags.outputs.next_tag != 'null' }}
         run: echo ${{ steps.docker_build.outputs.digest }}
+
+      - name: Add a new tag
+        shell: bash
+        if: ${{ steps.awscli_tags.outputs.next_tag != 'null' }}
+        run: |
+          next_tag=${{ steps.awscli_tags.outputs.next_tag }}
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git tag -a $next_tag -m "Automatic tag to catch up aws/aws-cli release"
+
+      - name: Push changes
+        if: ${{ steps.awscli_tags.outputs.next_tag != 'null' }}
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
 
   tagV2:
     if: ${{ false }}

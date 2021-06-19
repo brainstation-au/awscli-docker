@@ -1,10 +1,15 @@
-ARG DOCKER_TAG
+FROM ubuntu:latest
 
-FROM amazon/aws-cli:$DOCKER_TAG
+ARG DOCKER_TAG
 
 LABEL maintainer="brainstation<brainstation@outlook.com.au>"
 
-RUN yum update -y > /dev/null \
-    && yum install -y jq > /dev/null
+RUN apt-get update -y > /dev/null \
+    && apt-get install -y curl unzip jq > /dev/null
 
-ENTRYPOINT []
+RUN cd /tmp \
+    && curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-${DOCKER_TAG}.zip" -o "awscliv2.zip" \
+    && unzip awscliv2.zip \
+    && ./aws/install \
+    && rm -rf aws \
+    && rm awscliv2.zip

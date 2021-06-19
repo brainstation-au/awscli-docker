@@ -2,7 +2,7 @@ name: sync-tags
 
 on:
   schedule:
-    - cron: '0/10 * * * *'
+    - cron: '*/5 * * * *'
   push:
     branches:
       - "main"

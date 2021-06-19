@@ -31,6 +31,16 @@ jobs:
           next_tag=$(echo $new_tags | jq -r '.[0] | .tag')
           echo "::set-output name=next_tag::$next_tag"
 
+      - name: Build and Test Docker Image
+        shell: bash
+        if: ${{ steps.awscli_tags.outputs.next_tag != 'null' }}
+        env:
+          DOCKER_TAG: ${{ steps.awscli_tags.outputs.next_tag }}
+        run: |
+          docker-compose -f docker-compose.test.yml build sut1
+          docker-compose -f docker-compose.test.yml run --rm sut1
+          docker-compose -f docker-compose.test.yml down
+
       - name: Add a new tag
         shell: bash
         if: ${{ steps.awscli_tags.outputs.next_tag != 'null' }}
@@ -66,10 +76,13 @@ jobs:
           context: ./
           file: ./DockerfileV1
           push: true
+          build-args: |
+            DOCKER_TAG=${{ steps.awscli_tags.outputs.next_tag }}
           tags: |
             brainstation/awscli-test:${{ steps.awscli_tags.outputs.next_tag }}
 
       - name: Image digest
+        if: ${{ steps.awscli_tags.outputs.next_tag != 'null' }}
         run: echo ${{ steps.docker_build.outputs.digest }}
 
   tagV2:

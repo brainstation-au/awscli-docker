@@ -1,6 +1,7 @@
 # awscli
 A docker image with AWSCLI installed
 
+![Docker build](https://github.com/brainstation-au/awscli-docker/actions/workflows/tags.yml/badge.svg?branch=main)
 [![Docker build](https://img.shields.io/docker/cloud/build/brainstation/awscli?label=build&logo=docker)](https://hub.docker.com/r/brainstation/awscli/builds)
 ![Docker Pulls](https://img.shields.io/docker/pulls/brainstation/awscli.svg?label=pulls&logo=docker)
 

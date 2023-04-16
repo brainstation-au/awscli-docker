@@ -7,4 +7,4 @@ ARG BUILDPLATFORM
 LABEL maintainer="brainstation<brainstation@outlook.com.au>"
 
 COPY ./ubuntu.sh /tmp/
-RUN /tmp/ubuntu.sh
+RUN /tmp/ubuntu.sh $TARGETPLATFORM $DOCKER_TAG

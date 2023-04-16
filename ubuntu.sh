@@ -2,6 +2,9 @@
 
 set -eu
 
+TARGETPLATFORM=$1
+DOCKER_TAG=$2
+
 apt-get update -y > /dev/null
 apt-get install -y curl unzip jq > /dev/null
 

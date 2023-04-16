@@ -1,20 +1,10 @@
 FROM ubuntu:latest
 
 ARG DOCKER_TAG
+ARG TARGETPLATFORM
+ARG BUILDPLATFORM
 
 LABEL maintainer="brainstation<brainstation@outlook.com.au>"
 
-ARG TARGETPLATFORM
-ARG BUILDPLATFORM
-RUN echo "I am running on $BUILDPLATFORM, building for $TARGETPLATFORM"
-
-RUN apt-get update -y > /dev/null \
-    && apt-get install -y curl unzip jq > /dev/null
-
-RUN cd /tmp \
-    && AARCH=$([[ "$TARGETPLATFORM" == "linux/arm64" ]] && echo "aarch64" || echo "x86_64") \
-    && curl "https://awscli.amazonaws.com/awscli-exe-linux-${AARCH}-${DOCKER_TAG}.zip" -o "awscliv2.zip" \
-    && unzip -q awscliv2.zip \
-    && ./aws/install \
-    && rm -rf aws \
-    && rm awscliv2.zip
+COPY ./ubuntu.sh /tmp/
+RUN /tmp/ubuntu.sh
